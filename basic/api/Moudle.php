@@ -1,4 +1,6 @@
-mespace app\modules\forum;
+<?php
+
+namespace app\modules\forum;
 
 class Module extends \yii\base\Module
 {
