@@ -2,7 +2,7 @@
 
 namespace app\modules\forum\controllers;
 
-use yii\web\Controller;
+use yii\api\Controller;
 
 class AccountController extends Controller
 {
