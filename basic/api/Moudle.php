@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\forum;
+namespace app\modules\api;
 
 class Module extends \yii\base\Module
 {
