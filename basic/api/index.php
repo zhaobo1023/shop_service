@@ -11,5 +11,4 @@
 //
 //(new yii\api\application($config))->run();
 
-
-echo 'hello'; 
+ echo 'hello';
