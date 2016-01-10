@@ -9,7 +9,7 @@ require(__dir__ . '/../vendor/yiisoft/yii2/yii.php');
 //
 $config = require(__dir__ . '/../config/api.php');
 //
-(new yii\api\application($config))->run();
+(new yii\web\application($config))->run();
 
 
-/* echo 'hello'; */
+ echo 'hello';
