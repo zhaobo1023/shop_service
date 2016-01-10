@@ -21,6 +21,10 @@ class AccountController extends \yii\base\Controller
         $passwd = md5($request->post('passwd').$salt);
         $uniqueID = $request->post('uniqueID');
 
+        if(empty($phone) || empty($passwd)){
+            $this->ApiReturnFail(array(),'参数错误',300);
+        }
+
         $connection = \Yii::$app->db;
 
 //        $phone = 13811858523;
