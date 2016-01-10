@@ -23,6 +23,7 @@ class AccountController extends \yii\base\Controller
 
         $connection = \Yii::$app->db;
 
+//        $phone = 13811858523;
         $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number='.$phone);
         $find = $command->queryOne();
 
@@ -40,10 +41,10 @@ class AccountController extends \yii\base\Controller
 
             $ret = $connection->createCommand()->insert('user_account', $user_account_data)->execute();
             if($ret){
-                ApiReturnSuccess(array(),'返回成功',200);
+                $this->ApiReturnSuccess(array(),'返回成功',200);
             }
         }else{
-            ApiReturnFail(array(),'用户已注册',450);
+            $this->ApiReturnFail(array(),'用户已注册',450);
         }
 
     }
