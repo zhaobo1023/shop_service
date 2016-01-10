@@ -37,7 +37,9 @@ class AccountController extends \yii\base\Controller
         );
 
         $ret = $connection->createCommand()->insert('user_account', $user_account_data)->execute();
+
         var_dump($ret);
+		echo 123;
     }
 
     /**
