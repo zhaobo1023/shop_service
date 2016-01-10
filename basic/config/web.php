@@ -40,6 +40,14 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
     ],
     'params' => $params,
+
+    'modules' => [
+        'api' => [
+            'class' => 'app\modules\api\Module',
+            // ... 模块其他配置 ...
+        ],
+    ],
+
 ];
 
 if (YII_ENV_DEV) {
