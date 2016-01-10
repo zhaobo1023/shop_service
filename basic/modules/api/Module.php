@@ -8,7 +8,7 @@ class Module extends \yii\base\Module
     {
         parent::init();
 
-        $this->params['foo'] = 'bar';
+//        $this->params['foo'] = 'bar';
         // ...  其他初始化代码 ...
      }
 }

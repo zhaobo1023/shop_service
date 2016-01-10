@@ -1,13 +1,9 @@
 <?php
 
 namespace app\modules\api\controllers;
+use yii\base\Controller;
 
-use yii\web\Controller;
-
-
-namespace app\web\modules\api\controllers;
-
-class AccountController extends \yii\web\Controller
+class AccountController extends \yii\base\Controller
 {
     // ...
     public function actionIndex()
