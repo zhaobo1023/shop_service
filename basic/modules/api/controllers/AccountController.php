@@ -16,29 +16,58 @@ class AccountController extends \yii\base\Controller
     public function actionRegister()
     {
         $request = \Yii::$app->request;
-        $phone = $request->post('phone');
+        $phone = $request->post('username');
         $salt = '_user_passwd';
         $passwd = md5($request->post('passwd').$salt);
-        $device_id = $request->post('device_id');
+        $uniqueID = $request->post('uniqueID');
 
         $connection = \Yii::$app->db;
-        var_dump($connection);
 
-        $phone = '13811858523';
-        $passwd = 121312;
-        $user_account_data = array(
-            'nick_name' => $phone,
-            'head_image_url' => '',
-            'email' => '',
-            'ctime' => time(),
-            'phone_number' => $phone,
-            'gender' => 1,
-            'psswd' => $passwd,
-        );
+        $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number='.$phone);
+        $find = $command->queryOne();
 
-        $ret = $connection->createCommand()->insert('user_account', $user_account_data)->execute();
-        var_dump($ret);
+        if(!$find){
+            $user_account_data = array(
+                'nick_name' => $phone,
+                'head_image_url' => '',
+                'email' => '',
+                'ctime' => time(),
+                'phone_number' => $phone,
+                'gender' => 1,
+                'passwd' => $passwd,
+            );
 
+
+            $ret = $connection->createCommand()->insert('user_account', $user_account_data)->execute();
+            if($ret){
+                ApiReturnSuccess(array(),'返回成功',200);
+            }
+        }else{
+            ApiReturnFail(array(),'用户已注册',450);
+        }
+
+    }
+
+    public function ApiReturnSuccess($data, $info = '', $status = 0)
+    {
+        $result = array();
+        $result['status'] = $status;
+        $result['info'] = $info;
+        //    $result['data'] = $data;
+        $result['data'] = empty($data) ? new stdClass() : $data;
+
+        header("Content-Type:text/html; charset=utf-8");
+        exit(json_encode($result));
+    }
+
+
+    public function ApiReturnFail($info = '', $data = array(), $status = 1)
+    {
+        $result = array();
+        $result['status'] = $status;
+        $result['info'] = $info;
+        $result['data'] = empty($data) ? new stdClass() : $data;
+        exit(json_encode($result));
     }
 
 }
