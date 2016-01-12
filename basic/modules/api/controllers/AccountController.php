@@ -1,11 +1,12 @@
 <?php
 
 namespace app\modules\api\controllers;
-use yii\base\Controller;
-use yii\base\Application;
+use app\models\AccountModel;
+//use yii\base\Controller;
+//use yii\base\Application;
 
 
-class AccountController extends \yii\base\Controller
+class AccountController extends BaseController
 {
     // ...
     public function actionIndex()
@@ -13,6 +14,12 @@ class AccountController extends \yii\base\Controller
         echo 123;
     }
 
+
+    /**
+     * 用户注册
+     * author:zhaobo1023@gmail.com
+     * return:json
+     * */
     public function actionRegister()
     {
         $request = \Yii::$app->request;
@@ -25,55 +32,17 @@ class AccountController extends \yii\base\Controller
             $this->ApiReturnFail(array(),'参数错误',300);
         }
 
-        $connection = \Yii::$app->db;
+        $AccountModel = new AccountModel();
+        $ret = $AccountModel->register($phone,$passwd);
 
-//        $phone = 13811858523;
-        $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number='.$phone);
-        $find = $command->queryOne();
-
-        if(!$find){
-            $user_account_data = array(
-                'nick_name' => $phone,
-                'head_image_url' => '',
-                'email' => '',
-                'ctime' => time(),
-                'phone_number' => $phone,
-                'gender' => 1,
-                'passwd' => $passwd,
-            );
-
-
-            $ret = $connection->createCommand()->insert('user_account', $user_account_data)->execute();
-            if($ret){
-                $this->ApiReturnSuccess(array(),'返回成功',200);
-            }
-        }else{
+        if($ret === true){
+            $this->ApiReturnSuccess(array(),'返回成功',200);
+        }else if($ret === -1){
             $this->ApiReturnFail(array(),'用户已注册',450);
+        }else if($ret === -2){
+            $this->ApiReturnFail(array(),'注册失败，请重试',5000);
         }
 
-    }
-
-    public function ApiReturnSuccess($data, $info = '', $status = 0)
-    {
-        $result = array();
-        $result['status'] = $status;
-        $result['info'] = $info;
-        //    $result['data'] = $data;
-        $result['data'] = empty($data) ? array() : $data;
-
-        header("Content-Type:application/json; charset=utf-8");
-        exit(json_encode($result));
-    }
-
-
-    public function ApiReturnFail($info = '', $data = array(), $status = 1)
-    {
-        $result = array();
-        $result['status'] = $status;
-        $result['info'] = $info;
-        $result['data'] = empty($data) ? array() : $data;
-        header("Content-Type:application/json; charset=utf-8");
-        exit(json_encode($result));
     }
 
 }
