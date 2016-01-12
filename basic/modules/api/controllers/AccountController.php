@@ -59,9 +59,9 @@ class AccountController extends \yii\base\Controller
         $result['status'] = $status;
         $result['info'] = $info;
         //    $result['data'] = $data;
-        $result['data'] = empty($data) ? new stdClass() : $data;
+        $result['data'] = empty($data) ? array() : $data;
 
-        header("Content-Type:text/html; charset=utf-8");
+        header("Content-Type:application/json; charset=utf-8");
         exit(json_encode($result));
     }
 
@@ -71,7 +71,8 @@ class AccountController extends \yii\base\Controller
         $result = array();
         $result['status'] = $status;
         $result['info'] = $info;
-        $result['data'] = empty($data) ? new stdClass() : $data;
+        $result['data'] = empty($data) ? array() : $data;
+        header("Content-Type:application/json; charset=utf-8");
         exit(json_encode($result));
     }
 
