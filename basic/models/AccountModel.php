@@ -17,6 +17,9 @@ class AccountModel extends Model
 
     public function register($userName,$passwd)
     {
+        $salt = '_user_passwd';
+        $passwd_save = md5($passwd.$salt);
+
         $connection = \Yii::$app->db;
 
         $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number='.$userName);
@@ -30,12 +33,15 @@ class AccountModel extends Model
                 'ctime' => time(),
                 'phone_number' => $userName,
                 'gender' => 1,
-                'passwd' => $passwd,
+                'passwd' => $passwd_save,
             );
 
 
             $ret = $connection->createCommand()->insert('user_account', $user_account_data)->execute();
             if($ret){
+                return true;
+            }else{
+                return -1;
             }
         }else{
             return -2;
