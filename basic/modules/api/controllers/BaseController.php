@@ -7,16 +7,28 @@ use yii\base\Application;
 class BaseController extends \yii\base\Controller
 {
 
-//    protected function _initialize()
-//    {
+    public function _initialize()
+    {
+        //入口参数存全局变量，方便今后使用
+//        $data = \Yii::$app->request->post('data');
+//        $request = json_decode($data,true);
+//        $request = $this->getPostParameters();
 //
-//    }
+//        \Yii::$app->params['uniqueId'] = $request['uniqueId'];
+//        \Yii::$app->params['systemName'] = $request['systemName'];
+//        \Yii::$app->params['systemVersion'] = $request['systemVersion'];
+//        \Yii::$app->params['deviceType'] = $request['deviceType'];
+//        \Yii::$app->params['apiLevel'] = $request['apiLevel'];
+    }
 
     /**
      * parameter receive
      * */
     public function getPostParameters(){
-        $request = \Yii::$app->request->post();
+        $data = \Yii::$app->request->post('data');
+        $request = json_decode($data,true);
+//        $request = json_decode($data);
+
         return $request;
     }
 
@@ -36,9 +48,22 @@ class BaseController extends \yii\base\Controller
         $result['retDesc'] = $desc;
         $result['ret'] = $ret_array;
         header("Content-Type:application/json; charset=utf-8");
+//        var_dump($result);
         exit(json_encode($result));
     }
 
+
+    public function create_uuid()
+    {
+        $charid = strtoupper(md5(uniqid(mt_rand(), true)));
+        $uuid =
+            substr($charid, 0, 8) .
+            substr($charid, 8, 4) .
+            substr($charid, 12, 4) .
+            substr($charid, 16, 4) .
+            substr($charid, 20, 12);
+        return $uuid;
+    }
 
 
 

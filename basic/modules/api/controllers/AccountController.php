@@ -24,9 +24,9 @@ class AccountController extends BaseController
     public function actionRegister()
     {
         $parameters = $this->getPostParameters();
+
         $phone = $parameters['username'];
         $passwd = $parameters['passwd'];
-        $uniqueID = $parameters['uniqueID'];
 
         if(empty($phone) || empty($passwd)){
             $this->ApiReturnJson(300,'参数错误',array());
@@ -45,4 +45,50 @@ class AccountController extends BaseController
 
     }
 
+    /**
+     * 用户登陆
+     * author:zhaobo1023@gmail.com
+     * return:json
+     * */
+    public function actionLogin()
+    {
+        $parameters = $this->getPostParameters();
+        $userName = $parameters['username'];
+        $passwd = $parameters['passwd'];
+        $deviceToken = $parameters['deviceToken'];
+
+        if(empty($userName) || empty($passwd)){
+            $this->ApiReturnJson(300,'参数错误',array());
+        }
+
+        if($this->checkPasswd($userName,$passwd) === false){
+            $this->ApiReturnJson(400,'登陆失败',array());
+        }
+
+        //生成token,写入redis
+        $loginToken = $this->create_uuid();
+        $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$loginToken));
+
+
+    }
+
+    private function checkPasswd($userName,$passwd)
+    {
+        if(empty($userName) || empty($passwd)){
+            return false;
+        }
+        $AccountModel = new AccountModel();
+        $userPasswd = $AccountModel->getUserPasswd($userName);
+        $salt = \Yii::$app->params['passwdSalt'];
+        $passwd = md5($passwd.$salt);
+
+        if(empty($passwd)){
+            return false;
+        }else if($passwd != $userPasswd){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
 }

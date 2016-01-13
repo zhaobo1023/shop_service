@@ -17,11 +17,11 @@ class AccountModel extends Model
 
     public function register($userName,$passwd)
     {
-        $salt = '_user_passwd';
+        $salt = \Yii::$app->params['passwdSalt'];
+
         $passwd_save = md5($passwd.$salt);
 
         $connection = \Yii::$app->db;
-
         $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number='.$userName);
         $find = $command->queryOne();
 
@@ -47,6 +47,17 @@ class AccountModel extends Model
             return -2;
         }
 
+    }
+
+    public function getUserPasswd($userName)
+    {
+        $rows = (new \yii\db\Query())
+            ->select(['passwd'])
+            ->from('user_account')
+            ->where(['phone_number' => $userName])
+            ->limit(1)
+            ->all();
+        return $rows[0]['passwd'];
     }
 
 

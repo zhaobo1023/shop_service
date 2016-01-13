@@ -1,6 +1,7 @@
 <?php
 
 $params = require(__DIR__ . '/params.php');
+//$apiParams = require(__DIR__ . '/apiParams.php');
 
 $config = [
     'id' => 'basic',
@@ -41,6 +42,7 @@ $config = [
         'redis' => require(__DIR__ . '/redis.php'),
     ],
     'params' => $params,
+//    'apiParams' => $apiParams,
 
     'modules' => [
         'api' => [

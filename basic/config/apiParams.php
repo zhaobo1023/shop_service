@@ -1,8 +1,11 @@
 <?php
+/**
+ * author zhaobo1023@gmail.com
+ * api公共接口入口参数
+ * */
+
 
 return [
-    'adminEmail' => 'admin@example.com',
-    'passwdSalt' => '_user_passwd',
     'uniqueId' => '',
     'systemName' => '',
     'systemVersion' => '',
