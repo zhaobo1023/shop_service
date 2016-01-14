@@ -61,24 +61,36 @@ class AccountController extends BaseController
             $this->ApiReturnJson(300,'参数错误',array());
         }
 
-        if($this->checkPasswd($userName,$passwd) === false){
+        $return = $this->checkPasswd($userName,$passwd);
+        if($return === false){
             $this->ApiReturnJson(400,'登陆失败',array());
+        }else if($return > 0){
+            $userId = $return;
         }
 
         //生成token,写入redis
         $loginToken = $this->create_uuid();
+
+        $ret = $this->addTokenToCache($loginToken,$userId);
+
+
         $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$loginToken));
 
 
     }
 
+    /**
+     * checkpasswd and return userId
+     * @return false or userId if success
+     * */
     private function checkPasswd($userName,$passwd)
     {
         if(empty($userName) || empty($passwd)){
             return false;
         }
         $AccountModel = new AccountModel();
-        $userPasswd = $AccountModel->getUserPasswd($userName);
+        $userInfo = $AccountModel->getUserInfo($userName);
+        $userPasswd = $userInfo['passwd'];
         $salt = \Yii::$app->params['passwdSalt'];
         $passwd = md5($passwd.$salt);
 
@@ -87,8 +99,18 @@ class AccountController extends BaseController
         }else if($passwd != $userPasswd){
             return false;
         }else{
-            return true;
+            return $userInfo['id'];
         }
 
     }
+
+    private function addTokenToCache($token,$userId)
+    {
+        $AccountModel = new AccountModel();
+        $AccountModel->setAccessTokenAndUserId($token,$userId);
+        $AccountModel->addToLiveTokenList($token,$userId);
+
+    }
+
+
 }

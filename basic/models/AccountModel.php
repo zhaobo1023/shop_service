@@ -14,6 +14,8 @@ class AccountModel extends Model
     public $passwd;
     public $uniqueID;
     public $token;
+    private $keyLiveList = 'live_list_';
+
 
     public function register($userName,$passwd)
     {
@@ -60,6 +62,32 @@ class AccountModel extends Model
         return $rows[0]['passwd'];
     }
 
+    public function getUserInfo($userName)
+    {
+        $rows = (new \yii\db\Query())
+            ->select(['passwd'])
+            ->from('user_account')
+            ->where(['phone_number' => $userName])
+            ->limit(1)
+            ->all();
+        return $rows[0];
+    }
+
+
+    //后续迁移到redis
+
+    public function  setAccessTokenAndUserId($token, $user_id)
+    {
+        $tokenTime = 3600 * 24 * 30 * 12;
+        $ret = \Yii::$app->redis->set('token_' . $token, $user_id, $tokenTime);  //设置redis缓存
+        var_dump($ret);
+    }
+
+    public function addToLiveTokenList($token,$userId)
+    {
+        $ret = \Yii::$app->redis->sAdd($this->keyLiveList . $userId, $token);  //设置redis缓存
+        return $ret;
+    }
 
 
 }
