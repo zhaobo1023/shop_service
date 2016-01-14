@@ -83,7 +83,7 @@ class AccountController extends BaseController
     /**
      * 自动登录，更新token
      * */
-    public function actionAutoLogin()
+    public function actionAutologin()
     {
         $parameters = $this->getPostParameters();
         $userName = $parameters['username'];
@@ -98,8 +98,8 @@ class AccountController extends BaseController
             $this->ApiReturnJson(300,'用户不存在',array());
         }else{
             $newToken = $this->create_uuid();
-            renewToken($loginToken,$userInfo['id'],$newToken);
-            $AccountModel->ApiReturnJson(200,'登陆成功',array('loginToken'=>$newToken));
+            $AccountModel->renewToken($loginToken,$userInfo['id'],$newToken);
+            $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$newToken));
         }
 
     }

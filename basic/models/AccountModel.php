@@ -94,12 +94,12 @@ class AccountModel extends Model
 
     public function renewToken($oldToken,$userId,$newToken)
     {
-        \Yii::$app->redis->del('token_' . $newToken);  //设置redis缓存
+        \Yii::$app->redis->del('token_' . $oldToken);  //设置redis缓存
         \Yii::$app->redis->set('token_' . $newToken, $userId);  //设置redis缓存
 
         $key = $this->keyLiveList . $userId;
         $ret = \Yii::$app->redis->executeCommand('SMEMBERS',[$key]);  //设置redis缓存
-        if(in_array($oldToken,$key)){
+        if(in_array($oldToken,$ret)){
             \Yii::$app->redis->executeCommand('SREM',[$key,$oldToken]);  //设置redis缓存
             \Yii::$app->redis->executeCommand('SADD',[$key,$newToken]);  //设置redis缓存
         }else{
