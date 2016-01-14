@@ -65,7 +65,7 @@ class AccountModel extends Model
     public function getUserInfo($userName)
     {
         $rows = (new \yii\db\Query())
-            ->select(['passwd'])
+            ->select('*')
             ->from('user_account')
             ->where(['phone_number' => $userName])
             ->limit(1)
@@ -78,16 +78,35 @@ class AccountModel extends Model
 
     public function  setAccessTokenAndUserId($token, $user_id)
     {
-        $tokenTime = 3600 * 24 * 30 * 12;
-        $ret = \Yii::$app->redis->set('token_' . $token, $user_id, $tokenTime);  //设置redis缓存
-        var_dump($ret);
+//        $tokenTime = 3600 * 24 * 30 * 12;
+        $ret = \Yii::$app->redis->set('token_' . $token, $user_id);  //设置redis缓存
+        return $ret;
     }
 
     public function addToLiveTokenList($token,$userId)
     {
-        $ret = \Yii::$app->redis->sAdd($this->keyLiveList . $userId, $token);  //设置redis缓存
+        $liveList = array();
+        $key = $this->keyLiveList . $userId;
+        $liveList[$key] = $token;
+        $ret = \Yii::$app->redis->executeCommand('SADD',[$key,$token]);  //设置redis缓存
         return $ret;
     }
 
+    public function renewToken($oldToken,$userId,$newToken)
+    {
+        \Yii::$app->redis->del('token_' . $newToken);  //设置redis缓存
+        \Yii::$app->redis->set('token_' . $newToken, $userId);  //设置redis缓存
+
+        $key = $this->keyLiveList . $userId;
+        $ret = \Yii::$app->redis->executeCommand('SMEMBERS',[$key]);  //设置redis缓存
+        if(in_array($oldToken,$key)){
+            \Yii::$app->redis->executeCommand('SREM',[$key,$oldToken]);  //设置redis缓存
+            \Yii::$app->redis->executeCommand('SADD',[$key,$newToken]);  //设置redis缓存
+        }else{
+            \Yii::$app->redis->executeCommand('SADD',[$key,$newToken]);  //设置redis缓存
+        }
+
+
+    }
 
 }

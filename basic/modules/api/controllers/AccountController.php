@@ -79,6 +79,32 @@ class AccountController extends BaseController
 
     }
 
+
+    /**
+     * 自动登录，更新token
+     * */
+    public function actionAutoLogin()
+    {
+        $parameters = $this->getPostParameters();
+        $userName = $parameters['username'];
+        $loginToken = $parameters['loginToken'];
+
+        if(empty($userName) || empty($loginToken)){
+            return false;
+        }
+        $AccountModel = new AccountModel();
+        $userInfo = $AccountModel->getUserInfo($userName);
+        if(empty($userInfo)){
+            $this->ApiReturnJson(300,'用户不存在',array());
+        }else{
+            $newToken = $this->create_uuid();
+            renewToken($loginToken,$userInfo['id'],$newToken);
+            $AccountModel->ApiReturnJson(200,'登陆成功',array('loginToken'=>$newToken));
+        }
+
+    }
+
+
     /**
      * checkpasswd and return userId
      * @return false or userId if success
@@ -109,8 +135,8 @@ class AccountController extends BaseController
         $AccountModel = new AccountModel();
         $AccountModel->setAccessTokenAndUserId($token,$userId);
         $AccountModel->addToLiveTokenList($token,$userId);
-
     }
+
 
 
 }
