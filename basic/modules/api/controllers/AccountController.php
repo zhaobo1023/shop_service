@@ -134,10 +134,10 @@ class AccountController extends BaseController
     {
         $parameters = $this->getPostParameters();
         $userName = $parameters['username'];
-        $passwd = $parameters['passwd'];
+        $oldPasswd = $parameters['oldPasswd'];
         $newPasswd = $parameters['newPasswd'];
 
-        $return = $this->changePasswd($userName,$passwd,$newPasswd);
+        $return = $this->changePasswd($userName,$oldPasswd,$newPasswd);
         if($return === true){
             $this->ApiReturnJson(200,'修改密码成功',array());
         }else{
