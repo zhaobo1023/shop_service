@@ -17,17 +17,17 @@ class AccountModel extends Model
     private $keyLiveList = 'live_list_';
 
 
-    public function register($userName,$passwd)
+    public function register($userName, $passwd)
     {
         $salt = \Yii::$app->params['passwdSalt'];
 
-        $passwd_save = md5($passwd.$salt);
+        $passwd_save = md5($passwd . $salt);
 
         $connection = \Yii::$app->db;
-        $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number='.$userName);
+        $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number=' . $userName);
         $find = $command->queryOne();
 
-        if(!$find){
+        if (!$find) {
             $user_account_data = array(
                 'nick_name' => $userName,
                 'head_image_url' => '',
@@ -40,12 +40,12 @@ class AccountModel extends Model
 
 
             $ret = $connection->createCommand()->insert('user_account', $user_account_data)->execute();
-            if($ret){
+            if ($ret) {
                 return true;
-            }else{
+            } else {
                 return -1;
             }
-        }else{
+        } else {
             return -2;
         }
 
@@ -83,29 +83,47 @@ class AccountModel extends Model
         return $ret;
     }
 
-    public function addToLiveTokenList($token,$userId)
+    public function addToLiveTokenList($token, $userId)
     {
         $liveList = array();
         $key = $this->keyLiveList . $userId;
         $liveList[$key] = $token;
-        $ret = \Yii::$app->redis->executeCommand('SADD',[$key,$token]);  //设置redis缓存
+        $ret = \Yii::$app->redis->executeCommand('SADD', [$key, $token]);  //设置redis缓存
         return $ret;
     }
 
-    public function renewToken($oldToken,$userId,$newToken)
+    public function renewToken($oldToken, $userId, $newToken)
     {
         \Yii::$app->redis->del('token_' . $oldToken);  //设置redis缓存
         \Yii::$app->redis->set('token_' . $newToken, $userId);  //设置redis缓存
 
         $key = $this->keyLiveList . $userId;
-        $ret = \Yii::$app->redis->executeCommand('SMEMBERS',[$key]);  //设置redis缓存
-        if(in_array($oldToken,$ret)){
-            \Yii::$app->redis->executeCommand('SREM',[$key,$oldToken]);  //设置redis缓存
-            \Yii::$app->redis->executeCommand('SADD',[$key,$newToken]);  //设置redis缓存
-        }else{
-            \Yii::$app->redis->executeCommand('SADD',[$key,$newToken]);  //设置redis缓存
+        $ret = \Yii::$app->redis->executeCommand('SMEMBERS', [$key]);  //设置redis缓存
+        if (in_array($oldToken, $ret)) {
+            \Yii::$app->redis->executeCommand('SREM', [$key, $oldToken]);  //设置redis缓存
+            \Yii::$app->redis->executeCommand('SADD', [$key, $newToken]);  //设置redis缓存
+        } else {
+            \Yii::$app->redis->executeCommand('SADD', [$key, $newToken]);  //设置redis缓存
         }
 
+    }
+
+    public function destoryToken($token, $userId)
+    {
+        \Yii::$app->redis->del('token_' . $token);  //设置redis缓存
+        $key = $this->keyLiveList . $userId;
+        \Yii::$app->redis->executeCommand('SREM', [$key, $token]);  //设置redis缓存
+
+    }
+
+    public function getUserIdByToken($token)
+    {
+        $userId = \Yii::$app->redis->get('token_' . $token);  //设置redis缓存
+        if($userId && ($userId > 0)){
+            return 0;
+        }else{
+            return false;
+        }
 
     }
 

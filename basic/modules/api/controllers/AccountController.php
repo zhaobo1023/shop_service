@@ -90,7 +90,7 @@ class AccountController extends BaseController
         $loginToken = $parameters['loginToken'];
 
         if(empty($userName) || empty($loginToken)){
-            return false;
+            $this->ApiReturnJson(400,'参数错误',array());
         }
         $AccountModel = new AccountModel();
         $userInfo = $AccountModel->getUserInfo($userName);
@@ -103,6 +103,29 @@ class AccountController extends BaseController
         }
 
     }
+
+   /**
+    * 登出系统
+    * */
+    public function actionLogout()
+    {
+        $parameters = $this->getPostParameters();
+        $loginToken = $parameters['loginToken'];
+        if(empty($loginToken)){
+            $this->ApiReturnJson(400,'参数错误',array());
+        }
+
+        $AccountModel = new AccountModel();
+        $userId = $AccountModel->getUserIdByToken($loginToken);
+        if($userId === false){
+            $this->ApiReturnJson(450,'token已失效',array());
+        }else{
+            $ret = $AccountModel->destoryToken($loginToken,$userId);
+            $this->ApiReturnJson(200,'登出成功',array());
+        }
+
+    }
+
 
 
     /**
