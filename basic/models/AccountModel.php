@@ -19,10 +19,6 @@ class AccountModel extends Model
 
     public function register($userName, $passwd)
     {
-        $salt = \Yii::$app->params['passwdSalt'];
-
-        $passwd_save = md5($passwd . $salt);
-
         $connection = \Yii::$app->db;
         $command = $connection->createCommand('SELECT * FROM user_account WHERE phone_number=' . $userName);
         $find = $command->queryOne();
@@ -35,7 +31,7 @@ class AccountModel extends Model
                 'ctime' => time(),
                 'phone_number' => $userName,
                 'gender' => 1,
-                'passwd' => $passwd_save,
+                'passwd' => $passwd,
             );
 
 
@@ -72,6 +68,35 @@ class AccountModel extends Model
             ->all();
         return $rows[0];
     }
+
+    public function getUserInfoByWhere($where)
+    {
+        if(!empty($where)){
+            $rows = (new \yii\db\Query())
+                ->select('*')
+                ->from('user_account')
+                ->where($where)
+                ->limit(1)
+                ->all();
+            return $rows;
+        }else{
+            return array();
+        }
+
+    }
+
+    public function updateUserInfoByWhere($where,$data)
+    {
+        if(!empty($where) && !empty($data)){
+            $connection = \Yii::$app->db;
+            $ret = $connection->createCommand()->update('user_account', $data,$where)->execute();
+            return $ret;
+        }else{
+            return array();
+        }
+
+    }
+
 
 
     //后续迁移到redis

@@ -33,6 +33,7 @@ class AccountController extends BaseController
         }
 
         $AccountModel = new AccountModel();
+        $passwd = $this->getSavePasswd($passwd)
         $ret = $AccountModel->register($phone,$passwd);
 
         if($ret === true){
@@ -126,6 +127,24 @@ class AccountController extends BaseController
 
     }
 
+    /**
+     * 修改密码
+     * */
+    public function actionChangepasswd()
+    {
+        $parameters = $this->getPostParameters();
+        $userName = $parameters['username'];
+        $passwd = $parameters['passwd'];
+        $newPasswd = $parameters['newPasswd'];
+
+        $return = $this->changePasswd($userName,$passwd,$newPasswd);
+        if($return === true){
+            $this->ApiReturnJson(200,'修改密码成功',array());
+        }else{
+            $this->ApiReturnJson(300,'修改密码失败',array());
+        }
+    }
+
 
 
     /**
@@ -140,8 +159,7 @@ class AccountController extends BaseController
         $AccountModel = new AccountModel();
         $userInfo = $AccountModel->getUserInfo($userName);
         $userPasswd = $userInfo['passwd'];
-        $salt = \Yii::$app->params['passwdSalt'];
-        $passwd = md5($passwd.$salt);
+        $passwd = $this->getSavePasswd($passwd);
 
         if(empty($passwd)){
             return false;
@@ -153,6 +171,24 @@ class AccountController extends BaseController
 
     }
 
+    private function changePasswd($userName,$oldPasswd,$newPasswd)
+    {
+
+        $AccountModel = new AccountModel();
+        $where['username'] = $userName;
+        $where['passwd'] = $this->getSavePasswd($oldPasswd);
+        $userInfo = $AccountModel->getUserInfoByWhere($userName);
+        if(!empty($userInfo)){
+            $updateCondition['id'] = $userInfo[0]['id'];
+            $data['passwd'] = $this->getSavePasswd($newPasswd);
+            $ret = $AccountModel->updateUserInfoByWhere($updateCondition,$data);
+            return $ret;
+        }else{
+            return false;
+        }
+
+    }
+
     private function addTokenToCache($token,$userId)
     {
         $AccountModel = new AccountModel();
@@ -160,6 +196,12 @@ class AccountController extends BaseController
         $AccountModel->addToLiveTokenList($token,$userId);
     }
 
+    private function getSavePasswd($rawPasswd)
+    {
+        $salt = \Yii::$app->params['passwdSalt'];
+
+        return md5($rawPasswd.$salt);
+    }
 
 
 }
