@@ -25,10 +25,10 @@ class BaseController extends \yii\base\Controller
      * parameter receive
      * */
     public function getPostParameters(){
-        $data = \Yii::$app->request->post('data');
-        $request = json_decode($data,true);
+//        $data = \Yii::$app->request->post('data');
 //        $request = json_decode($data);
-
+        $data = file_get_contents('php://input');
+        $request = json_decode($data,true);
         return $request;
     }
 

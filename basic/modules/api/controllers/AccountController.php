@@ -33,7 +33,7 @@ class AccountController extends BaseController
         }
 
         $AccountModel = new AccountModel();
-        $passwd = $this->getSavePasswd($passwd)
+        $passwd = $this->getSavePasswd($passwd);
         $ret = $AccountModel->register($phone,$passwd);
 
         if($ret === true){
@@ -54,6 +54,7 @@ class AccountController extends BaseController
     public function actionLogin()
     {
         $parameters = $this->getPostParameters();
+
         $userName = $parameters['username'];
         $passwd = $parameters['passwd'];
         $deviceToken = $parameters['deviceToken'];
