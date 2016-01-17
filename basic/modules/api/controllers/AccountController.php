@@ -39,9 +39,9 @@ class AccountController extends BaseController
         if($ret === true){
             $this->ApiReturnJson(200,'返回成功',array());
         }else if($ret === -1){
-            $this->ApiReturnJson(450,'用户已注册',array());
+            $this->ApiReturnJson(460,'注册失败',array());
         }else if($ret === -2){
-            $this->ApiReturnJson(460,'注册失败，请重试',array());
+            $this->ApiReturnJson(450,'用户已注册',array());
         }
 
     }
