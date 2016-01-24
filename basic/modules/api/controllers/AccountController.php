@@ -165,6 +165,9 @@ class AccountController extends BaseController
             $userInfo['company'] = $parameters['company'];
         }
 
+        if(empty($userInfo)){
+            $this->ApiReturnJson(560,'更新失败',array());
+        }
 
         if(empty($loginToken)){
             $this->ApiReturnJson(550,'token无效',array());
