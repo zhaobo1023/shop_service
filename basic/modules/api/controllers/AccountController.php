@@ -147,6 +147,44 @@ class AccountController extends BaseController
     }
 
 
+    /**
+     * 修改个人信息
+     * */
+    public function actionChangeUserInfo()
+    {
+        $parameters = $this->getPostParameters();
+        $loginToken = $parameters['loginToken'];
+
+        if(isset($parameters['nickname'])){
+            $userInfo['nickname'] = $parameters['nickname'];
+        }
+        if(isset($parameters['gender'])){
+            $userInfo['gender'] = $parameters['gender'];
+        }
+        if(isset($parameters['company'])){
+            $userInfo['company'] = $parameters['company'];
+        }
+
+
+        if(empty($loginToken)){
+            $this->ApiReturnJson(550,'token无效',array());
+        }
+
+        $AccountModel = new AccountModel();
+        $userId = $AccountModel->getUserIdByToken($loginToken);
+        if(!isset($userId) && ($userId < 0)){
+            $this->ApiReturnJson(550,'token无效',array());
+        }
+
+        $where['id'] = $userId;
+        $ret = $AccountModel->updateUserInfo($where,$userInfo);
+        if($ret == true){
+            $this->ApiReturnJson(200,'更新成功',array());
+        }else{
+            $this->ApiReturnJson(560,'更新失败',array());
+        }
+
+    }
 
     /**
      * checkpasswd and return userId

@@ -25,13 +25,14 @@ class AccountModel extends Model
 
         if (!$find) {
             $user_account_data = array(
-                'nick_name' => $userName,
+                'nick_name' => '',
                 'head_image_url' => '',
                 'email' => '',
                 'ctime' => time(),
                 'phone_number' => $userName,
                 'gender' => 1,
                 'passwd' => $passwd,
+                'company' => '',
             );
 
 
@@ -97,10 +98,6 @@ class AccountModel extends Model
 
     }
 
-
-
-    //后续迁移到redis
-
     public function  setAccessTokenAndUserId($token, $user_id)
     {
 //        $tokenTime = 3600 * 24 * 30 * 12;
@@ -151,5 +148,20 @@ class AccountModel extends Model
         }
 
     }
+
+    /**
+     * @param array
+     * */
+    public function updateUserInfo($where,$userInfo)
+    {
+        if(empty($where) || empty($userInfo)){
+            return false;
+        }
+        $connection = \Yii::$app->db;
+        $ret = $connection->createCommand()->update('user_account', $userInfo,$where)->execute();
+        return $ret;
+
+    }
+
 
 }
