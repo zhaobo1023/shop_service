@@ -121,7 +121,8 @@ class AccountModel extends Model
 
         $key = $this->keyLiveList . $userId;
         $ret = \Yii::$app->redis->executeCommand('SMEMBERS', [$key]);  //设置redis缓存
-        if (in_array($oldToken, $ret)) {
+
+        if(is_array($ret) && in_array($oldToken, $ret)) {
             \Yii::$app->redis->executeCommand('SREM', [$key, $oldToken]);  //设置redis缓存
             \Yii::$app->redis->executeCommand('SADD', [$key, $newToken]);  //设置redis缓存
         } else {
@@ -142,7 +143,7 @@ class AccountModel extends Model
     {
         $userId = \Yii::$app->redis->get('token_' . $token);  //设置redis缓存
         if($userId && ($userId > 0)){
-            return 0;
+            return $userId;
         }else{
             return false;
         }

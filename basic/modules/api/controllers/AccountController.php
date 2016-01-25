@@ -12,7 +12,7 @@ class AccountController extends BaseController
     // ...
     public function actionIndex()
     {
-        echo 123;
+        echo 1234;
     }
 
 
@@ -150,13 +150,13 @@ class AccountController extends BaseController
     /**
      * 修改个人信息
      * */
-    public function actionChangeUserInfo()
+    public function actionChangeuserinfo()
     {
         $parameters = $this->getPostParameters();
         $loginToken = $parameters['loginToken'];
 
-        if(isset($parameters['nickname'])){
-            $userInfo['nickname'] = $parameters['nickname'];
+        if(isset($parameters['nick_name'])){
+            $userInfo['nick_name'] = $parameters['nickname'];
         }
         if(isset($parameters['gender'])){
             $userInfo['gender'] = $parameters['gender'];
@@ -175,7 +175,7 @@ class AccountController extends BaseController
 
         $AccountModel = new AccountModel();
         $userId = $AccountModel->getUserIdByToken($loginToken);
-        if(!isset($userId) && ($userId < 0)){
+        if(!isset($userId) && ($userId <= 0)){
             $this->ApiReturnJson(550,'token无效',array());
         }
 
@@ -184,7 +184,8 @@ class AccountController extends BaseController
         if($ret == true){
             $this->ApiReturnJson(200,'更新成功',array());
         }else{
-            $this->ApiReturnJson(560,'更新失败',array());
+            $this->ApiReturnJson(560,'更新a失败',array());
+            //$this->ApiReturnJson(560,'更新a失败',array('where' => var_export($where,true),'data'=>var_export($userInfo,true)));
         }
 
     }
