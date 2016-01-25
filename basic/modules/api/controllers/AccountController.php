@@ -116,7 +116,25 @@ class AccountController extends BaseController
         }else{
             $newToken = $this->create_uuid();
             $AccountModel->renewToken($loginToken,$userInfo['id'],$newToken);
-            $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$newToken));
+
+            $where['phone_number'] = $userName;
+            $userInfo = $AccountModel->getUserInfoByWhere($where);
+            if(!empty($userInfo)){
+                $data = array(
+                        'username'                  => $userInfo[0]['phone_number'],
+                        'nickname'                  => $userInfo[0]['nick_name'],
+                        'gender'                    =>$userInfo[0]['gender'],
+                        'avatarImageThumbnailsUrl'  =>  '',
+                        'avatarImageOriginalUrl'    =>  '',
+                        'company'                   =>$userInfo[0]['company'],
+                        'companyVerification'       => 0,
+                );
+            }else{
+                $data = array();
+            }
+
+            $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$newToken,'userInfo' => $userInfo));
+
         }
 
     }
@@ -204,6 +222,45 @@ class AccountController extends BaseController
         }
 
     }
+
+    /**
+     * 上传头像
+     * */
+    public function actionUploadheadimg()
+    {
+        $parameters = $this->getPostParameters();
+        $loginToken = $parameters['loginToken'];
+        $imgData = $parameters['avatarImageFile'];
+
+        if(empty($loginToken)){
+            $this->ApiReturnJson(550,'token无效',array());
+        }
+
+        $AccountModel = new AccountModel();
+        $userId = $AccountModel->getUserIdByToken($loginToken);
+        if(empty($userId) || $userId <= 0){
+            $this->ApiReturnJson(550,'token无效',array());
+        }
+
+        $dir = 'upload/'.date('Y').'/'.date('m').'/';
+        $path = $dir.md5(time().$userId).'.jpg';
+
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0777, true)) {
+                $this->ApiReturnJson(560,'创建目录失败',array());
+            }
+        }
+        if (!is_writable($dir)) {
+            $this->ApiReturnJson(561,'系统不可写',array());
+        }
+        if (!file_put_contents($path, $imgData)) {
+            $this->ApiReturnJson(562,'文件写入失败',array());
+        }
+        $this->ApiReturnJson(200,'图片上传成功',array('ret' => $path));
+//        $this->ApiReturnJson(200,'图片上传成功',array());
+
+    }
+
 
     /**
      * checkpasswd and return userId
