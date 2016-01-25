@@ -57,7 +57,7 @@ class AccountController extends BaseController
 
         $userName = $parameters['username'];
         $passwd = $parameters['passwd'];
-        $deviceToken = $parameters['deviceToken'];
+//        $deviceToken = $parameters['deviceToken'];
 
         if(empty($userName) || empty($passwd)){
             $this->ApiReturnJson(300,'参数错误',array());
@@ -73,11 +73,26 @@ class AccountController extends BaseController
         //生成token,写入redis
         $loginToken = $this->create_uuid();
 
-        $ret = $this->addTokenToCache($loginToken,$userId);
+        $this->addTokenToCache($loginToken,$userId);
 
+        $AccountModel = new AccountModel();
+        $where['phone_number'] = $userName;
+        $userInfo = $AccountModel->getUserInfoByWhere($where);
+        if(!empty($userInfo)){
+            $data = array(
+                'username'                  => $userInfo[0]['phone_number'],
+                'nickname'                  => $userInfo[0]['nick_name'],
+                'gender'                    =>$userInfo[0]['gender'],
+                'avatarImageThumbnailsUrl'  =>  '',
+                'avatarImageOriginalUrl'    =>  '',
+                'company'                   =>$userInfo[0]['company'],
+                'companyVerification'       => 0,
+            );
+        }else{
+            $data = array();
+        }
 
-        $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$loginToken));
-
+        $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$loginToken,'userInfo' => $userInfo));
 
     }
 
