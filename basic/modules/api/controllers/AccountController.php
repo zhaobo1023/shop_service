@@ -188,7 +188,7 @@ class AccountController extends BaseController
         $parameters = $this->getPostParameters();
         $loginToken = $parameters['loginToken'];
 
-        if(isset($parameters['nick_name'])){
+        if(isset($parameters['nickname'])){
             $userInfo['nick_name'] = $parameters['nickname'];
         }
         if(isset($parameters['gender'])){
