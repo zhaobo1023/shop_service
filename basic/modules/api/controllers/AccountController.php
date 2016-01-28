@@ -92,7 +92,7 @@ class AccountController extends BaseController
             $data = array();
         }
 
-        $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$loginToken,'userInfo' => $userInfo));
+        $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$loginToken,'userInfo' => $data));
 
     }
 
@@ -133,7 +133,7 @@ class AccountController extends BaseController
                 $data = array();
             }
 
-            $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$newToken,'userInfo' => $userInfo));
+            $this->ApiReturnJson(200,'登陆成功',array('loginToken'=>$newToken,'userInfo' => $data));
 
         }
 

@@ -40,6 +40,7 @@ $config = [
         ],
         'db' => require(__DIR__ . '/db.php'),
         'redis' => require(__DIR__ . '/redis.php'),
+        'qiniu' => require(__DIR__ . '/qiniu.php'),
     ],
     'params' => $params,
 //    'apiParams' => $apiParams,
