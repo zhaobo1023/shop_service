@@ -30,6 +30,14 @@ class BaseController extends \yii\base\Controller
         return $request;
     }
 
+    /**
+     * 获取表单参数
+     * */
+    public function getFormParameters(){
+        $request = \Yii::$app->request->post();
+        return $request;
+    }
+
 //    private function ParameterCheck(){
 //
 //

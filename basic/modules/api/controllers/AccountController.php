@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 use app\models\AccountModel;
+use app\models\UploadImg;
 //use app\modules\api\controllers\BaseController;
 //use yii\base\Controller;
 //use yii\base\Application;
@@ -228,9 +229,11 @@ class AccountController extends BaseController
      * */
     public function actionUploadheadimg()
     {
-        $parameters = $this->getPostParameters();
+        $parameters = $this->getFormParameters();
         $loginToken = $parameters['loginToken'];
         $imgData = $parameters['avatarImageFile'];
+        var_dump($loginToken);
+        var_dump($imgData);
 
         if(empty($loginToken)){
             $this->ApiReturnJson(550,'token无效',array());
@@ -238,7 +241,8 @@ class AccountController extends BaseController
 
         $AccountModel = new AccountModel();
         $userId = $AccountModel->getUserIdByToken($loginToken);
-        if(empty($userId) || $userId <= 0){
+
+        if(empty($userId) || intval($userId) <= 0){
             $this->ApiReturnJson(550,'token无效',array());
         }
 
@@ -256,8 +260,16 @@ class AccountController extends BaseController
         if (!file_put_contents($path, $imgData)) {
             $this->ApiReturnJson(562,'文件写入失败',array());
         }
-        $this->ApiReturnJson(200,'图片上传成功',array('ret' => $path));
-//        $this->ApiReturnJson(200,'图片上传成功',array());
+
+        /**
+         * 上传到七牛
+         * */
+        $uploadRet = uploadImg::getInstance()->uploadImag($path,$dir);
+        if($uploadRet['code'] == true){
+            $this->ApiReturnJson(200,'图片上传成功',array('ret' => $uploadRet['content']['key']));
+        }else{
+            $this->ApiReturnJson(570,'图片上传七牛失败',array());
+        }
 
     }
 
