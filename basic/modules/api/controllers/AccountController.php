@@ -232,8 +232,6 @@ class AccountController extends BaseController
         $parameters = $this->getFormParameters();
         $loginToken = $parameters['loginToken'];
         $imgData = $parameters['avatarImageFile'];
-        var_dump($loginToken);
-        var_dump($imgData);
 
         if(empty($loginToken)){
             $this->ApiReturnJson(550,'token无效',array());
