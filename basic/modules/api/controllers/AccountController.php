@@ -241,7 +241,7 @@ class AccountController extends BaseController
         $userId = $AccountModel->getUserIdByToken($loginToken);
 
         if(empty($userId) || intval($userId) <= 0){
-            $this->ApiReturnJson(550,'token无效',array());
+            $this->ApiReturnJson(551,'token无效',array());
         }
 
         $dir = 'upload/'.date('Y').'/'.date('m').'/';
