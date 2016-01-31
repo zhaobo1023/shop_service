@@ -272,7 +272,7 @@ class AccountController extends BaseController
         $uploadRet = uploadImg::getInstance()->uploadImag($path,$dir);
         if($uploadRet['code'] == true){
             //URL写入数据库
-            $where['user_id'] = $userId;
+            $where['id'] = $userId;
             $data['head_image_url'] =  $image_prefix . $uploadRet['content']['key'];
             $ret = $AccountModel->updateUserInfo($where,$data);
             if($ret == true){
