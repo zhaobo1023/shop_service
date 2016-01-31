@@ -5,5 +5,5 @@ return [
     'hostname' => '115.28.228.41',
     'port' => 6379,
     'password'=>'qwe123asd',
-    'database' => 0,
+    'database' => 1,
 ];
