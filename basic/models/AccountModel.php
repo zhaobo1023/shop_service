@@ -143,8 +143,10 @@ class AccountModel extends Model
     {
         $key = 'token_' .$token;
         $userId = \Yii::$app->redis->get($key);  //设置redis缓存
-        var_dump($userId);exit;
         //$userId = \Yii::$app->redis->get('token_' . $token);  //设置redis缓存
+		var_dump($userId);
+		var_dump($key);
+		return 5;
         if(isset($userId) && ($userId > 0)){
             return $userId;
         }else{
