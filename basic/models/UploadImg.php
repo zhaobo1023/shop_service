@@ -48,13 +48,13 @@ class uploadImg
 
         // 上传到七牛后保存的文件名
 //        $key = 'my-php-logo.png';
-        $key = $fileName.'.png';
+        $key = $fileName.'.jpeg';
 
         // 初始化 UploadManager 对象并进行文件的上传。
         $uploadMgr = new UploadManager();
 
         // 调用 UploadManager 的 putFile 方法进行文件的上传。
-        list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
+        list($ret, $err) = $uploadMgr->putFile($token, $key, $fileName);
 //        echo "\n====> putFile result: \n";
         if ($err !== null) {
 //            var_dump($err);
