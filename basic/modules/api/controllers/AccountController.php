@@ -252,7 +252,7 @@ class AccountController extends BaseController
         }
 
         $dir = 'upload/'.date('Y').'/'.date('m').'/';
-        $path = $dir.md5(time().$userId);
+        $path = $dir.md5(time().$userId).'.jpeg';
 
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0777, true)) {

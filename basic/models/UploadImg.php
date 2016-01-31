@@ -43,12 +43,10 @@ class uploadImg
         $token = $auth->uploadToken($bucket);
 
         // 要上传文件的本地路径
-//        $filePath = './php-logo.png';
         $filePath = $Path;
 
         // 上传到七牛后保存的文件名
-//        $key = 'my-php-logo.png';
-        $key = $fileName.'.jpeg';
+        $key = $fileName;
 
         // 初始化 UploadManager 对象并进行文件的上传。
         $uploadMgr = new UploadManager();
