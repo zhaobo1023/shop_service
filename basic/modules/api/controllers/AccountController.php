@@ -10,12 +10,17 @@ use app\models\UploadImg;
 
 class AccountController extends BaseController
 {
+    private $image_prefix;
     // ...
     public function actionIndex()
     {
         echo 1234;
     }
 
+    public function __construct()
+    {
+        $this->image_prefix = 'http://7xntis.com1.z0.glb.clouddn.com';
+    }
 
     /**
      * 用户注册
@@ -264,7 +269,12 @@ class AccountController extends BaseController
          * */
         $uploadRet = uploadImg::getInstance()->uploadImag($path,$dir);
         if($uploadRet['code'] == true){
-            $this->ApiReturnJson(200,'图片上传成功',array('ret' => $uploadRet['content']['key']));
+            //URL写入数据库
+            $where['user_id'] = $userId;
+            $data['head_image_url'] =  $this->image_prefix . $uploadRet['content']['key'];
+            $userId = $AccountModel->updateUserInfo($where,$data);
+
+            $this->ApiReturnJson(200,'图片上传成功',array('ret' => $data['head_image_url']));
         }else{
             $this->ApiReturnJson(570,'图片上传七牛失败',array());
         }
