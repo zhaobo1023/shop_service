@@ -236,7 +236,7 @@ class AccountController extends BaseController
     {
         $parameters = $this->getFormParameters();
         $loginToken = $parameters['loginToken'];
-        $imgData = $parameters['avatarImageFile'];
+        $imgData = $_FILES['avatarImageFile'];
 
         $image_prefix = 'http://7xntis.com1.z0.glb.clouddn.com';
 
@@ -262,6 +262,7 @@ class AccountController extends BaseController
         if (!is_writable($dir)) {
             $this->ApiReturnJson(561,'系统不可写',array());
         }
+        file_put_contents($path, $_FILES); //DEBUG
         if (!file_put_contents($path, $imgData)) {
             $this->ApiReturnJson(562,'文件写入失败',array());
         }
