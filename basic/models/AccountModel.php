@@ -141,8 +141,11 @@ class AccountModel extends Model
 
     public function getUserIdByToken($token)
     {
-        $userId = \Yii::$app->redis->get('token_' . $token);  //设置redis缓存
-        if($userId && ($userId > 0)){
+        $key = 'token_' .$token;
+        $userId = \Yii::$app->redis->get($key);  //设置redis缓存
+        var_dump($userId);exit;
+        //$userId = \Yii::$app->redis->get('token_' . $token);  //设置redis缓存
+        if(isset($userId) && ($userId > 0)){
             return $userId;
         }else{
             return false;
